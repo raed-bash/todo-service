@@ -1,0 +1,39 @@
+POST http://localhost:3001/user  
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJVc2VySWQiOjJ9.Yvmr8A_AL0W56Gah8pmK0Sn6YifereyRTq1nnNh7Rn8
+
+
+{"username":"raed5","password":"00000000","role":"EMPLOYEE"}
+
+###
+GET http://localhost:3001/user/1
+
+###
+PATCH  http://localhost:3001/user
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJVc2VySWQiOjJ9.Yvmr8A_AL0W56Gah8pmK0Sn6YifereyRTq1nnNh7Rn8
+
+{
+    "id": 2,
+    "locked": false,
+    "username":"raed2",
+    "role":"EMPLOYEE"
+
+}
+
+###
+GET http://localhost:3001/user
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJVc2VySWQiOjJ9.Yvmr8A_AL0W56Gah8pmK0Sn6YifereyRTq1nnNh7Rn8
+
+###
+
+GET http://localhost:3001/task/all
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOjEsInVzZXJuYW1lIjoicmFlZCIsImlhdCI6MTcwNTMxOTIzOSwiZXhwIjoxNzA1MzIxMDM5fQ.kcCe8RVnrSMn0IMC3iYAj3JYAiyg_mpv2zjmcEsE6Ew
+
+
+###
+POST http://localhost:3001/task 
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJVc2VySWQiOjR9.DJk7BR_t1IE05CVxBnj1zfPh1wq8Vr9ukpaGBfULf_Y
+
+{"title": "my task "}
