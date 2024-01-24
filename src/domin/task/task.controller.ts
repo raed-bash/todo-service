@@ -187,24 +187,14 @@ export class TaskController {
     @ReqUser() adminUser: UserDto,
   ) {
     const [task, firebaseToken] = await this.allTaskService.createToUser(body);
-
     if (firebaseToken) {
-      await axios.post(
-        'https://fcm.googleapis.com/fcm/send',
-        {
-          registration_ids: [firebaseToken],
-          notification: {
-            title: 'Created New Task',
-            body: `${adminUser.username} Created Task for You`,
-          },
+      sendFCM({
+        registration_ids: [firebaseToken],
+        notification: {
+          title: 'Created New Task',
+          body: `${adminUser.username} Created Task for You`,
         },
-        {
-          headers: {
-            Authorization:
-              'Bearer AAAA0mSXX3A:APA91bGUKodUJiUDwGKfKp71SpjnQIGFUiGIyFux0dfSuanM3eZ3jA0WsBLXxTNi5tCkOndrMoiWHPGE1ABUrPVOzr0JYu5w-jhpW1kHbPF15iRe65sqHf4NHmLziGveJJUEDYEs1b6P',
-          },
-        },
-      );
+      });
     }
 
     return task;
@@ -239,5 +229,30 @@ export class TaskController {
     const task = await this.allTaskService.deleteToUser(id);
 
     return new TaskDto(task);
+  }
+}
+
+type FCMPayload = {
+  registration_ids: string[];
+  notification: {
+    title: string;
+    body: string;
+  };
+};
+async function sendFCM(payload: FCMPayload) {
+  try {
+    const res = await axios.post(
+      'https://fcm.googleapis.com/fcm/send',
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.SERVER_FCM_KEY}`,
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+    console.log(res.data);
+  } catch (err) {
+    console.error(err);
   }
 }

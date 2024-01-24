@@ -37,5 +37,6 @@ lerna-debug.log*
 .env
 
 /prisma/migrations
+/request.rest
 
-test.js
+test.js 
