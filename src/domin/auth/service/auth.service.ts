@@ -48,6 +48,6 @@ export class AuthService {
       });
     }
 
-    return token;
+    return { message: 'You have been logged in successfully', token };
   }
 }
