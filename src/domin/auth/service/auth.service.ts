@@ -33,21 +33,6 @@ export class AuthService {
       expiresIn: 60 * 30,
     });
 
-    const oldToken = await this.prisma.token.findUnique({
-      where: { userId: user.id },
-    });
-
-    if (oldToken) {
-      await this.prisma.token.update({
-        where: { userId: user.id },
-        data: { token },
-      });
-    } else {
-      await this.prisma.token.create({
-        data: { userId: user.id, token },
-      });
-    }
-
     return { message: 'You have been logged in successfully', token };
   }
 }

@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Roles, Token } from '@prisma/client';
+import { Roles } from '@prisma/client';
 import { pick } from 'lodash';
 export class UserDto {
   @ApiProperty()

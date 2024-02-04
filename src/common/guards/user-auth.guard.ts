@@ -5,7 +5,6 @@ import {
   ForbiddenException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { IncomingHttpHeaders } from 'http';
 import { PrismaService } from '../prisma/prisma.service';
 import { REQUEST_USER_INFO, RequestUser } from './user-auth.decorator';
 import { Request } from 'express';
@@ -101,7 +100,6 @@ export class UserAuthGuard implements CanActivate {
   private async _getUser(id: number) {
     const user = await this.prisma.user.findUnique({
       where: { id },
-      include: { Token: true },
     });
     return user;
   }

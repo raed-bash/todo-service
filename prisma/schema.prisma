@@ -24,19 +24,11 @@ model User {
   firebaseToken   String?   @unique()
   createdAt       DateTime  @default(now())
   updatedAt       DateTime?
-  Task            Task[]
+  Task            Task[] 
 
-  Token     Token?    
-
+  notifications   UsersOnNotifications[]
 }
-
-model Token {
-  id         Int      @id @default(autoincrement())
-  token      String   
-  userId     Int      @unique()
-
-  user    User @relation(fields: [userId], references: [id])
-}
+ 
 
 model Task {
   id        Int       @id @default(autoincrement())
@@ -48,4 +40,21 @@ model Task {
 
   userId Int
   user   User @relation(fields: [userId], references: [id])
+}
+
+
+model Notification{
+  id        Int       @id @default(autoincrement())
+  message   String
+  users     UsersOnNotifications[]
+}
+
+model UsersOnNotifications{
+  notification   Notification   @relation(fields: [notificationId],references: [id])
+  notificationId Int
+
+  user           User           @relation(fields: [userId], references: [id])
+  userId         Int
+
+  @@id([notificationId, userId])
 }
