@@ -31,6 +31,7 @@ import { AllQueryTaskDto } from './dto/all-query-task.dto';
 import { AllCreateTaskDto } from './dto/all-create-task.dto';
 import { AllTaskService } from './service/all-task.service';
 import axios from 'axios';
+import { NotificationService } from '../notification/service/notification.service';
 
 @Controller('task')
 @ApiTags('Task')
@@ -39,6 +40,7 @@ export class TaskController {
   constructor(
     private readonly taskService: TaskService,
     private readonly allTaskService: AllTaskService,
+    private readonly notificationService: NotificationService,
   ) {}
 
   @Get()
@@ -187,13 +189,18 @@ export class TaskController {
     @ReqUser() adminUser: UserDto,
   ) {
     const [task, firebaseToken] = await this.allTaskService.createToUser(body);
+
+    const notification = {
+      title: 'Created New Task',
+      body: `${adminUser.username} Created Task for You`,
+    };
+
+    this.notificationService.storeNotification([body.userId], notification);
+
     if (firebaseToken) {
       sendFCM({
         registration_ids: [firebaseToken],
-        notification: {
-          title: 'Created New Task',
-          body: `${adminUser.username} Created Task for You`,
-        },
+        notification,
       });
     }
 
