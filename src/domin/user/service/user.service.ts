@@ -75,12 +75,14 @@ export class UserService {
     return this.prisma.$transaction(async (prisma) => {
       await this.findById(data.id);
 
-      const usernameUsed = await prisma.user.findUnique({
-        where: { username: data.username, NOT: { id: data.id } },
-      });
+      if (data.username) {
+        const usernameUsed = await prisma.user.findUnique({
+          where: { username: data.username, NOT: { id: data.id } },
+        });
 
-      if (usernameUsed) {
-        throw new BadRequestException('username is used');
+        if (usernameUsed) {
+          throw new BadRequestException('username is used');
+        }
       }
 
       const user = await prisma.user.update({

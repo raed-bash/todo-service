@@ -87,7 +87,7 @@ export class UserController {
   @ApiOkResponse({ type: UserDto })
   @AllowRoles(['ADMIN'])
   async changePasswordUser(@Body() body: ChangePasswordUserDto) {
-    const user = await this.userService.edit(body);
+    const user = await this.userService.changePassword(body);
 
     return new UserDto(user);
   }
