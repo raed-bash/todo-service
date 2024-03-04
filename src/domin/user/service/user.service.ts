@@ -16,7 +16,7 @@ export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findByQuery(query: QueryUserDto) {
-    const { username, locked, role, perPage, page } = query;
+    const { username, locked, role, perPage, page, orderBy, orderDir } = query;
 
     return this.prisma.$transaction([
       this.prisma.user.count({
@@ -35,6 +35,7 @@ export class UserService {
         take: perPage,
         skip: (page - 1) * perPage,
         select: this.USER_SELECT,
+        orderBy: orderBy ? { [orderBy]: orderDir } : undefined,
       }),
     ]);
   }

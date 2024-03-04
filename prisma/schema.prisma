@@ -21,7 +21,7 @@ model User {
   password        String
   role            Roles
   locked          Boolean   @default(false)
-  firebaseToken   String?   @unique()
+  firebaseToken   String?   
   createdAt       DateTime  @default(now())
   updatedAt       DateTime?
   Task            Task[] 

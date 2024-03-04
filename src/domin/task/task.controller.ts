@@ -122,17 +122,6 @@ export class TaskController {
     return new TaskDto(task);
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: "Get Task By it's id" })
-  @ApiOkResponse({ type: TaskDto })
-  async getUserById(
-    @Param('id', ParseIntPipe) id: number,
-    @ReqUser() user: UserDto,
-  ) {
-    const task = await this.taskService.findById(id, user.id);
-    return new TaskDto(task);
-  }
-
   @Post('completed')
   @ApiBody({ type: ChangeCompletedStatusTaskDto })
   @ApiOperation({ summary: 'Change Completed Status' })
@@ -177,6 +166,25 @@ export class TaskController {
       count,
       query,
     );
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: "Get Task By it's id" })
+  @ApiOkResponse({ type: TaskDto })
+  async getTasksUserById(
+    @Param('id', ParseIntPipe) id: number,
+    @ReqUser() user: UserDto,
+  ) {
+    const task = await this.taskService.findById(id, user.id);
+    return new TaskDto(task);
+  }
+
+  @Get('all/:id')
+  @ApiOperation({ summary: "Get any Task By it's id" })
+  @ApiOkResponse({ type: TaskDto })
+  async getAllTasksUserById(@Param('id', ParseIntPipe) id: number) {
+    const task = await this.allTaskService.findById(id);
+    return new TaskDto(task);
   }
 
   @Post('all')

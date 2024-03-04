@@ -1,10 +1,29 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { Task } from '@prisma/client';
 import { Transform } from 'class-transformer';
 import { IsDate, IsOptional, IsString } from 'class-validator';
 import { IsBooleanFilter } from 'src/common/decorators/query-filters/boolean-filter.decorator';
-import { PaginatedQueryDto } from 'src/common/dto/paginated-query.dto';
+import {
+  IsOrderAttribute,
+  OrderedPaginatedQueryDto,
+  OrderedQueryDto,
+} from 'src/common/dto/orderd-paginated-query.dto';
 
-export class QueryTaskDto extends PaginatedQueryDto {
+const orderAttributes: (keyof Task)[] = [
+  'id',
+  'title',
+  'completed',
+  'createdAt',
+  'updatedAt',
+  'removedAt',
+] as const;
+
+type OrderAttributes = (typeof orderAttributes)[number];
+
+export class QueryTaskDto
+  extends OrderedPaginatedQueryDto
+  implements OrderedQueryDto
+{
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
@@ -24,4 +43,7 @@ export class QueryTaskDto extends PaginatedQueryDto {
   @Transform(({ value }) => new Date(value))
   @IsOptional()
   toDate?: Date;
+
+  @IsOrderAttribute(orderAttributes)
+  orderBy: OrderAttributes = 'id';
 }

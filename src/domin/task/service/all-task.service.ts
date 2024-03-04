@@ -39,9 +39,9 @@ export class AllTaskService {
     return [task, user.firebaseToken];
   }
 
-  async findById(id: number, userId?: number) {
+  async findById(id: number) {
     const task = await this.prisma.task.findUnique({
-      where: { id, userId, user: { role: 'EMPLOYEE' } },
+      where: { id, user: { role: 'EMPLOYEE' } },
       include: { user: true },
     });
     if (!task) {

@@ -4,6 +4,7 @@ import { AddNotificationDto } from '../dto/add-notification.dto';
 import { UserDto } from 'src/domin/user/dto/user.dto';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { NotificationDto } from '../dto/notification.dto';
+import { NotificationQueryDto } from '../dto/notification-query.dto';
 
 @Injectable()
 export class NotificationService {
@@ -15,8 +16,10 @@ export class NotificationService {
     const notificationUser = await this.prisma.user.update({
       where: { id: user.id },
       data: { firebaseToken: data.notificationToken },
+      select: { firebaseToken: true },
     });
-    return { message: 'ok' };
+
+    return notificationUser;
   }
   async storeNotification(
     userIds: number[],
@@ -37,17 +40,21 @@ export class NotificationService {
     });
   }
 
-  async findNotification(userId: number) {
-    const notifications = await this.prisma.notification.findMany({
-      where: {
-        users: { some: { userId: userId } },
-      },
-    });
+  async findByQuery(query: NotificationQueryDto & { userId: number }) {
+    const { userId, orderBy, orderDir } = query;
 
-    if (!notifications) {
-      throw new NotFoundException();
-    }
-
-    return notifications;
+    return await this.prisma.$transaction([
+      this.prisma.notification.count({
+        where: {
+          users: { some: { userId: userId } },
+        },
+      }),
+      this.prisma.notification.findMany({
+        where: {
+          users: { some: { userId: userId } },
+        },
+        orderBy: orderBy ? { [orderBy]: orderDir } : undefined,
+      }),
+    ]);
   }
 }

@@ -14,8 +14,18 @@ import { AllQueryTaskDto } from '../dto/all-query-task.dto';
 export class TaskService {
   constructor(private readonly prisma: PrismaService) {}
   async findByQuery(query: AllQueryTaskDto & { role?: Roles }) {
-    const { title, completed, page, perPage, userId, fromDate, toDate, role } =
-      query;
+    const {
+      title,
+      completed,
+      page,
+      perPage,
+      userId,
+      fromDate,
+      toDate,
+      role,
+      orderBy,
+      orderDir,
+    } = query;
 
     return await this.prisma.$transaction([
       this.prisma.task.count({
@@ -40,19 +50,30 @@ export class TaskService {
         take: perPage,
         skip: (page - 1) * perPage,
         include: { user: true },
+        orderBy: orderBy ? { [orderBy]: orderDir } : undefined,
       }),
     ]);
   }
 
   async findByQueryDeleted(query: AllQueryTaskDto & { role?: Roles }) {
-    const { title, completed, page, perPage, userId, fromDate, toDate, role } =
-      query;
+    const {
+      title,
+      completed,
+      page,
+      perPage,
+      userId,
+      fromDate,
+      toDate,
+      role,
+      orderBy,
+      orderDir,
+    } = query;
 
     return await this.prisma.$transaction([
       this.prisma.task.count({
         where: {
           completed,
-          title,
+          title: { contains: title },
           userId,
           createdAt: { gte: fromDate, lte: toDate },
           NOT: { removedAt: null },
@@ -62,7 +83,7 @@ export class TaskService {
       this.prisma.task.findMany({
         where: {
           completed,
-          title,
+          title: { contains: title },
           userId,
           createdAt: { gte: fromDate, lte: toDate },
           NOT: { removedAt: null },
@@ -71,6 +92,7 @@ export class TaskService {
         include: { user: true },
         take: perPage,
         skip: (page - 1) * perPage,
+        orderBy: orderBy ? { [orderBy]: orderDir } : undefined,
       }),
     ]);
   }

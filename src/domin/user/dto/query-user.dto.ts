@@ -2,9 +2,27 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Roles } from '@prisma/client';
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { IsBooleanFilter } from 'src/common/decorators/query-filters/boolean-filter.decorator';
-import { PaginatedQueryDto } from 'src/common/dto/paginated-query.dto';
+import {
+  IsOrderAttribute,
+  OrderedPaginatedQueryDto,
+  OrderedQueryDto,
+} from 'src/common/dto/orderd-paginated-query.dto';
 
-export class QueryUserDto extends PaginatedQueryDto {
+const orderAttributes = [
+  'id',
+  'username',
+  'locked',
+  'role',
+  'createdAt',
+  'updatedAt',
+] as const;
+
+type OrderAttributes = (typeof orderAttributes)[number];
+
+export class QueryUserDto
+  extends OrderedPaginatedQueryDto
+  implements OrderedQueryDto
+{
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
@@ -17,4 +35,7 @@ export class QueryUserDto extends PaginatedQueryDto {
   @IsEnum(Roles)
   @IsOptional()
   role?: Roles;
+
+  @IsOrderAttribute(orderAttributes)
+  orderBy: OrderAttributes = 'id';
 }
