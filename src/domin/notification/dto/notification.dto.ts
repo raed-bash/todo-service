@@ -9,4 +9,7 @@ export class NotificationDto {
 
   @ApiProperty()
   body!: string;
+
+  @ApiProperty()
+  seen!: boolean;
 }

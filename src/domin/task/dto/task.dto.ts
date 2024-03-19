@@ -1,6 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { pick } from 'lodash';
-import { UserDto } from 'src/domin/user/dto/user.dto';
 
 export class TaskDto {
   @ApiProperty()
@@ -11,9 +10,6 @@ export class TaskDto {
 
   @ApiProperty()
   completed!: boolean;
-
-  @ApiProperty()
-  user!: UserDto;
 
   @ApiProperty()
   createdAt!: Date;
@@ -36,7 +32,5 @@ export class TaskDto {
         'removedAt',
       ]),
     );
-
-    this.user = new UserDto(task.user);
   }
 }

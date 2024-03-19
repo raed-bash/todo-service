@@ -38,3 +38,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJVc2VySWQiOjR9.DJk7BR_t1IE05CVxBnj1
 
 {"title": "my task "}
  
+
+
+###
+GET http://localhost:3001/notification?perPage=10&page=1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInVzZXJuYW1lIjoiZW1wbG95ZWUxIiwicm9sZXMiOlsiRU1QTE9ZRUUiXSwiaWF0IjoxNzEwODI3MTQwLCJleHAiOjE3MTA4Mjg5NDB9.JlEagY-DIXakiuJeCW7NLwhYYl5ZC1nzhRxor15I6GA

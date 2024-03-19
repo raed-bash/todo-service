@@ -23,7 +23,6 @@ export class AllTaskService {
         completed: data.completed,
         updatedAt: new Date(),
       },
-      include: { user: true },
       where: { id: data.id },
     });
   }
@@ -42,7 +41,6 @@ export class AllTaskService {
   async findById(id: number) {
     const task = await this.prisma.task.findUnique({
       where: { id, user: { role: 'EMPLOYEE' } },
-      include: { user: true },
     });
     if (!task) {
       throw new NotFoundException(`Task is Not Exist`);
@@ -56,7 +54,6 @@ export class AllTaskService {
     return this.prisma.task.update({
       where: { id: data.id },
       data: { completed: data.completed },
-      include: { user: true },
     });
   }
 
@@ -66,7 +63,6 @@ export class AllTaskService {
     return this.prisma.task.update({
       where: { id },
       data: { removedAt: new Date() },
-      include: { user: true },
     });
   }
 }

@@ -49,7 +49,6 @@ export class TaskService {
         },
         take: perPage,
         skip: (page - 1) * perPage,
-        include: { user: true },
         orderBy: orderBy ? { [orderBy]: orderDir } : undefined,
       }),
     ]);
@@ -89,7 +88,6 @@ export class TaskService {
           NOT: { removedAt: null },
           user: { role: role },
         },
-        include: { user: true },
         take: perPage,
         skip: (page - 1) * perPage,
         orderBy: orderBy ? { [orderBy]: orderDir } : undefined,
@@ -100,7 +98,6 @@ export class TaskService {
   async create(data: CreateTaskDto & { userId: number }) {
     return await this.prisma.task.create({
       data: { ...data },
-      include: { user: true },
     });
   }
 
@@ -110,14 +107,12 @@ export class TaskService {
     return await this.prisma.task.update({
       where: { id: task.id },
       data: { ...data, updatedAt: new Date() },
-      include: { user: true },
     });
   }
 
   async findById(id: number, userId?: number) {
     const task = await this.prisma.task.findUnique({
       where: { id, userId },
-      include: { user: true },
     });
     if (!task) {
       throw new NotFoundException(`Task is Not Exist`);
@@ -134,7 +129,6 @@ export class TaskService {
     return this.prisma.task.update({
       where: { id: data.id },
       data: { completed: data.completed },
-      include: { user: true },
     });
   }
 
@@ -148,7 +142,6 @@ export class TaskService {
     return this.prisma.task.update({
       where: { id },
       data: { removedAt: new Date() },
-      include: { user: true },
     });
   }
 }

@@ -55,6 +55,7 @@ model Notification{
 model UsersOnNotifications{
   notification   Notification   @relation(fields: [notificationId],references: [id])
   notificationId Int
+  seen           Boolean        @default(false)
 
   user           User           @relation(fields: [userId], references: [id])
   userId         Int

@@ -12,7 +12,6 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiOperation,
-  ApiProperty,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -21,8 +20,8 @@ import { ReqUser } from 'src/common/guards/user-auth.decorator';
 import { UserDto } from '../user/dto/user.dto';
 import { NotificationDto } from './dto/notification.dto';
 import { NotificationQueryDto } from './dto/notification-query.dto';
-import { PaginatedQueryDto } from 'src/common/dto/paginated-query.dto';
 import { PaginatedResultsDto } from 'src/common/dto/paginated-result.dto';
+import { ReadNotificationDto } from './dto/read-notification.dto';
 
 @Controller('notification')
 @ApiTags('Notification')
@@ -37,22 +36,33 @@ export class NotificationController {
     @Query() query: NotificationQueryDto,
     @ReqUser() user: UserDto,
   ) {
-    const [count, notifications] = await this.notificationService.findByQuery({
-      ...query,
-      userId: user.id,
-    });
+    const [count, unseenTotal, notifications] =
+      await this.notificationService.findByQuery({
+        ...query,
+        userId: user.id,
+      });
 
-    return new PaginatedResultsDto(notifications, count, query);
+    return {
+      ...new PaginatedResultsDto(notifications, count, query),
+      extra: { unseenTotal },
+    };
   }
 
   @HttpCode(HttpStatus.OK)
   @Post()
   @ApiBody({ type: AddNotificationDto })
   @ApiOperation({ summary: 'Get User of Notification token' })
-  addNotificationToken(
+  async addNotificationToken(
     @Body() body: AddNotificationDto,
     @ReqUser() user: UserDto,
   ) {
-    return this.notificationService.addNotificationToken(body, user);
+    return await this.notificationService.addNotificationToken(body, user);
+  }
+
+  @Post('read')
+  @ApiBody({ type: ReadNotificationDto })
+  @ApiOperation({ summary: 'Change Notification Seen' })
+  async changeNotificationSeen(@Body() body: ReadNotificationDto) {
+    return await this.notificationService.readNotification(body);
   }
 }
