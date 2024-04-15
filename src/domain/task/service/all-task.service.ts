@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { AllCreateTaskDto } from '../dto/all-create-task.dto';
-import { UserService } from 'src/domin/user/service/user.service';
+import { UserService } from 'src/domain/user/service/user.service';
 import { EditTaskDto } from '../dto/edit-task.dto';
 import { ChangeCompletedStatusTaskDto } from '../dto/change-completed-status-task.dto';
 import { TaskDto } from '../dto/task.dto';

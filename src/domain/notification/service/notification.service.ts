@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { UserService } from 'src/domin/user/service/user.service';
+import { UserService } from 'src/domain/user/service/user.service';
 import { AddNotificationDto } from '../dto/add-notification.dto';
-import { UserDto } from 'src/domin/user/dto/user.dto';
+import { UserDto } from 'src/domain/user/dto/user.dto';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { NotificationDto } from '../dto/notification.dto';
 import { NotificationQueryDto } from '../dto/notification-query.dto';
