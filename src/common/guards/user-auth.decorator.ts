@@ -3,7 +3,7 @@ import {
   ForbiddenException,
   createParamDecorator,
 } from '@nestjs/common';
-import { UserDto } from 'src/domin/user/dto/user.dto';
+import { UserDto } from 'src/domain/user/dto/user.dto';
 
 export const REQUEST_USER_INFO = Symbol('REQUEST_USER_INFO');
 
