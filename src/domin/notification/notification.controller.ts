@@ -8,13 +8,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { NotificationService } from './service/notification.service';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AddNotificationDto } from './dto/add-notification.dto';
 import { ReqUser } from 'src/common/guards/user-auth.decorator';
 import { UserDto } from '../user/dto/user.dto';
@@ -22,10 +16,11 @@ import { NotificationDto } from './dto/notification.dto';
 import { NotificationQueryDto } from './dto/notification-query.dto';
 import { PaginatedResultsDto } from 'src/common/dto/paginated-result.dto';
 import { ReadNotificationDto } from './dto/read-notification.dto';
+import { AuthRequired } from 'src/common/guards/auth-required.decorator';
 
 @Controller('notification')
 @ApiTags('Notification')
-@ApiBearerAuth()
+@AuthRequired()
 export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 

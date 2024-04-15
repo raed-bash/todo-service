@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  todo-service:
+    image: raedbash/todo-service
+    container_name: todo-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8082:8082'
+
+    depends_on:
+      - todo-mysql
+    env_file:
+      - .env.compose
+
+  todo-mysql:
+    image: mysql:8.2
+    container_name: todo-mysql
+    environment:
+      - MYSQL_DATABASE=todo_service
+      - MYSQL_ROOT_PASSWORD=password
+    volumes:
+      - /opt/todo/todo_mysql:/var/lib/mysql
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
+      interval: 5s
+      timeout: 5s
+      retries: 10

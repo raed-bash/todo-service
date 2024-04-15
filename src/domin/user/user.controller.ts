@@ -10,7 +10,6 @@ import {
 } from '@nestjs/common';
 import { UserService } from './service/user.service';
 import {
-  ApiBearerAuth,
   ApiBody,
   ApiExtraModels,
   ApiOkResponse,
@@ -24,10 +23,11 @@ import { EditUserDto } from './dto/edit-user.dto';
 import { PaginatedResultsDto } from 'src/common/dto/paginated-result.dto';
 import { AllowRoles } from 'src/common/guards/user-auth.guard';
 import { ChangePasswordUserDto } from './dto/change-password-user.dto';
+import { AuthRequired } from 'src/common/guards/auth-required.decorator';
 
 @Controller('user')
 @ApiTags('Users')
-@ApiBearerAuth()
+@AuthRequired()
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

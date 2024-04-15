@@ -10,7 +10,6 @@ import {
   Query,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
   ApiBody,
   ApiExtraModels,
   ApiOkResponse,
@@ -32,10 +31,11 @@ import { AllCreateTaskDto } from './dto/all-create-task.dto';
 import { AllTaskService } from './service/all-task.service';
 import axios from 'axios';
 import { NotificationService } from '../notification/service/notification.service';
+import { AuthRequired } from 'src/common/guards/auth-required.decorator';
 
 @Controller('task')
 @ApiTags('Task')
-@ApiBearerAuth()
+@AuthRequired()
 export class TaskController {
   constructor(
     private readonly taskService: TaskService,

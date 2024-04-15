@@ -11,6 +11,7 @@ import { Request } from 'express';
 import { Reflector } from '@nestjs/core';
 import { Roles } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
+import { isAuthRequired } from './auth-required.decorator';
 
 export const AllowRoles = Reflector.createDecorator<Roles[]>();
 
@@ -23,8 +24,8 @@ export class UserAuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    if (!isAuthRequired(this.reflector, context)) return true;
     const request: Request = context.switchToHttp().getRequest();
-    if (request.path === '/auth/login') return true;
 
     const authHeader = request.headers['authorization'];
 

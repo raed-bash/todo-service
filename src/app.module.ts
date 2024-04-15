@@ -9,15 +9,22 @@ import { UserAuthGuard } from './common/guards/user-auth.guard';
 import { AuthModule } from './domin/auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { NotificationModule } from './domin/notification/notification.module';
+import { HealthcheckModule } from './healthcheck/healthcheck.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+      isGlobal: true,
+    }),
     PrismaModule,
     AuthModule,
     UserModule,
     TaskModule,
     NotificationModule,
     JwtModule.register({ secret: process.env.SECRET_KEY_JWT }),
+    HealthcheckModule,
   ],
   providers: [
     ChatGateway,
