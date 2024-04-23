@@ -12,7 +12,7 @@ services:
     depends_on:
       - todo-mysql
     env_file:
-      - .env.compose
+      - .env.prod
 
   todo-mysql:
     image: mysql:8.2
