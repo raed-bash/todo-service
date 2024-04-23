@@ -11,6 +11,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { NotificationModule } from './domain/notification/notification.module';
 import { HealthcheckModule } from './healthcheck/healthcheck.module';
 import { ConfigModule } from '@nestjs/config';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ConfigModule } from '@nestjs/config';
     NotificationModule,
     JwtModule.register({ secret: process.env.SECRET_KEY_JWT }),
     HealthcheckModule,
+    SeedModule,
   ],
   providers: [
     ChatGateway,

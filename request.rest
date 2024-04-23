@@ -43,3 +43,15 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJVc2VySWQiOjR9.DJk7BR_t1IE05CVxBnj1
 ###
 GET http://localhost:3001/notification?perPage=10&page=1
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInVzZXJuYW1lIjoiZW1wbG95ZWUxIiwicm9sZXMiOlsiRU1QTE9ZRUUiXSwiaWF0IjoxNzEwODI3MTQwLCJleHAiOjE3MTA4Mjg5NDB9.JlEagY-DIXakiuJeCW7NLwhYYl5ZC1nzhRxor15I6GA
+
+
+###
+POST http://216.137.181.173:8080/api/v1/users/resetPassword
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJVc2VySWQiOjEsIlJvbGVzIjpbeyJhdXRob3JpdHkiOiJTVVBFUl9BRE1JTiJ9LHsiYXV0aG9yaXR5IjoiTUlOSVNUUllfQURNSU4ifV0sInN1YiI6ImFkbWluIiwiaWF0IjoxNzEzMjQ0NTUyLCJleHAiOjE3MTMzMzA5NTJ9.CDVD3DgBQ5lbfbuF9NXPzHCVOgoD5MMAJSKFTOWVAojEIK7HySWoBQss5CVoAGkXW6OgJ1IURYkifoHL4AqwqjE5JFbkyBAnu_u-VPjG0uXyaHLglaxmuxvi_8dlIlGLq2Be0NN3Tn-ArgUt2GF8bI4QkC_pXsrMj6DbPEfII9OeyvuEIBFOAG2MJ_TaN0H3XQFgUm0gpprhWWmIUjA4yb3IPjCQJ-0D9SI7X54ljq3qcFEdbbbxHC2kvsnZ049ltSnqURzhLQaz2cryhc0RXM9yRSYDVrBdpdIbU5h9o4KVFONpTj1KHtzSLcdIXsAYpvGJg3o7HjpRIhh9Z7VHPg
+Content-Type: multipart/form-data
+
+{
+    "id": 2,
+    "newPassword":"password"
+}
+

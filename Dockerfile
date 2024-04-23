@@ -21,11 +21,10 @@ FROM node:hydrogen-alpine
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package*.json ./ 
 COPY --from=builder /app/bin/healthcheck.cjs ./
+COPY --from=builder /app/bin/seed.cjs ./
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 
-HEALTHCHECK --interval=3s --timeout=3s --start-period=15s CMD node /healthcheck.cjs
-
- 
+HEALTHCHECK --interval=3s --timeout=3s --start-period=15s CMD node /healthcheck.cjs && node /seed.cjs
 
 CMD [ "npm", "run", "start:dockerized" ]
