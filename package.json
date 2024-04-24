@@ -12,7 +12,7 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "start:dockerized": "npx prisma migrate deploy && NODE_ENV=prod node dist/main",
+    "start:dockerized": "npx prisma migrate deploy && npx prisma db seed && NODE_ENV=prod node dist/main",
     "prisma:format": "npx prisma format",
     "prisma:generate": "npx prisma generate",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -21,6 +21,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   },
   "bin": {
     "healthcheck": "./bin/healthcheck.cjs"
