@@ -12,7 +12,7 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "start:dockerized": "npx prisma migrate deploy && npx prisma db seed && NODE_ENV=prod node dist/main",
+    "start:dockerized": "npx prisma migrate deploy && npx prisma db seed && NODE_ENV=prod node dist/src/main",
     "prisma:format": "npx prisma format",
     "prisma:generate": "npx prisma generate",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
