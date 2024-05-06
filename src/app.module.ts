@@ -13,7 +13,7 @@ import { HealthcheckModule } from './healthcheck/healthcheck.module';
 import { ConfigModule } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { FCMModule } from './domain/fcm/fcm.module';
-import { HttpModule } from '@nestjs/axios';
+import { EventDispatcherModule } from './events/event-dispatcher.module';
 
 @Module({
   imports: [
@@ -22,7 +22,6 @@ import { HttpModule } from '@nestjs/axios';
       isGlobal: true,
     }),
     EventEmitterModule.forRoot(),
-    HttpModule.register({ timeout: 5000, maxRedirects: 5 }),
     JwtModule.register({ secret: process.env.SECRET_KEY_JWT }),
     PrismaModule,
     AuthModule,
@@ -31,6 +30,7 @@ import { HttpModule } from '@nestjs/axios';
     NotificationModule,
     HealthcheckModule,
     FCMModule,
+    EventDispatcherModule,
   ],
   providers: [
     ChatGateway,

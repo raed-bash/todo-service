@@ -1,7 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { FCMPayload } from '../constants/fcm.events-type';
-import { OnEvent } from '@nestjs/event-emitter';
+import { OnEventTypes } from 'src/events/decorators/on-event.decorator';
 
 @Injectable()
 export class FCMEventService {
@@ -9,7 +8,7 @@ export class FCMEventService {
 
   constructor(private readonly httpService: HttpService) {}
 
-  @OnEvent('fcm.send')
+  @OnEventTypes('fcm.send')
   async send(payload: FCMPayload) {
     try {
       const res = await this.httpService.axiosRef.post(
@@ -29,3 +28,11 @@ export class FCMEventService {
     }
   }
 }
+
+export type FCMPayload = {
+  registration_ids: string[];
+  notification: {
+    title: string;
+    body: string;
+  };
+};

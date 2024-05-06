@@ -8,14 +8,14 @@ import { NotificationQueryDto } from '../dto/notification-query.dto';
 import { ReadNotificationDto } from '../dto/read-notification.dto';
 import { SendNotificationDto } from '../dto/send-notification.dto';
 import { QueryUserDto } from 'src/domain/user/dto/query-user.dto';
-import { EventEmitter2Types } from 'src/events/event-emitter-2';
+import { EventDispatcherService } from 'src/events/event-dispatcher.service';
 
 @Injectable()
 export class NotificationService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly userService: UserService,
-    private readonly eventEmitter: EventEmitter2Types,
+    private readonly emit: EventDispatcherService,
   ) {}
 
   async addNotificationToken(data: AddNotificationTokenDto, user: UserDto) {
@@ -148,7 +148,7 @@ export class NotificationService {
       }
     }
 
-    this.eventEmitter.emit('fcm.send', {
+    this.emit.sendFCM({
       notification: { title: data.title, body: data.body },
       registration_ids: firebaseTokens,
     });

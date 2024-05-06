@@ -31,7 +31,8 @@ import { AllCreateTaskDto } from './dto/all-create-task.dto';
 import { AllTaskService } from './service/all-task.service';
 import { NotificationService } from '../notification/service/notification.service';
 import { AuthRequired } from 'src/common/guards/auth-required.decorator';
-import { EventEmitter2Types } from 'src/events/event-emitter-2';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EventDispatcherService } from 'src/events/event-dispatcher.service';
 
 @Controller('task')
 @ApiTags('Task')
@@ -41,7 +42,7 @@ export class TaskController {
     private readonly taskService: TaskService,
     private readonly allTaskService: AllTaskService,
     private readonly notificationService: NotificationService,
-    private readonly eventEmitter: EventEmitter2Types,
+    private readonly emit: EventDispatcherService,
   ) {}
 
   @Get()
@@ -207,7 +208,7 @@ export class TaskController {
     this.notificationService.storeNotification([body.userId], notification);
 
     if (firebaseToken) {
-      this.eventEmitter.emit('fcm.send', {
+      this.emit.sendFCM({
         registration_ids: [firebaseToken],
         notification,
       });
