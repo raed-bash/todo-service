@@ -1,20 +1,24 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UserService } from 'src/domain/user/service/user.service';
-import { AddNotificationDto } from '../dto/add-notification.dto';
+import { AddNotificationTokenDto } from '../dto/add-notification-token.dto';
 import { UserDto } from 'src/domain/user/dto/user.dto';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { NotificationDto } from '../dto/notification.dto';
 import { NotificationQueryDto } from '../dto/notification-query.dto';
 import { ReadNotificationDto } from '../dto/read-notification.dto';
+import { SendNotificationDto } from '../dto/send-notification.dto';
+import { QueryUserDto } from 'src/domain/user/dto/query-user.dto';
+import { EventEmitter2Types } from 'src/events/event-emitter-2';
 
 @Injectable()
 export class NotificationService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly userService: UserService,
+    private readonly eventEmitter: EventEmitter2Types,
   ) {}
 
-  async addNotificationToken(data: AddNotificationDto, user: UserDto) {
+  async addNotificationToken(data: AddNotificationTokenDto, user: UserDto) {
     const notificationUser = await this.prisma.user.update({
       where: { id: user.id },
       data: { firebaseToken: data.notificationToken },
@@ -104,6 +108,66 @@ export class NotificationService {
         },
       },
       data: { seen: data.seen },
+    });
+  }
+
+  async sendNotification(data: SendNotificationDto) {
+    const firebaseTokens: string[] = [];
+
+    if (data.userIds.length) {
+      for (const id of data.userIds) {
+        const users = await this.userService.findById(id);
+        if (users.firebaseToken) {
+          firebaseTokens.push(users.firebaseToken);
+        }
+      }
+    } else {
+      const role = data.role;
+      const limit = 30;
+      let skip = 0;
+      const total = await this.prisma.user.count({
+        where: { locked: false, role: role },
+      });
+
+      while (true) {
+        const users = await this.retriveAllUser(
+          { locked: false, role: role },
+          { limit, skip },
+        );
+
+        users.forEach(({ id, firebaseToken }) => {
+          data.userIds.push(id);
+          if (firebaseToken) {
+            firebaseTokens.push(firebaseToken);
+          }
+        });
+
+        skip += limit;
+
+        if (skip >= total) break;
+      }
+    }
+
+    this.eventEmitter.emit('fcm.send', {
+      notification: { title: data.title, body: data.body },
+      registration_ids: firebaseTokens,
+    });
+
+    return await this.storeNotification(data.userIds, {
+      body: data.body,
+      title: data.body,
+    });
+  }
+
+  async retriveAllUser(
+    filter: Pick<SendNotificationDto & QueryUserDto, 'role' | 'locked'>,
+    { skip, limit }: { skip: number; limit: number },
+  ) {
+    return await this.prisma.user.findMany({
+      where: { ...filter },
+      skip: skip,
+      take: limit,
+      select: { id: true, firebaseToken: true },
     });
   }
 }

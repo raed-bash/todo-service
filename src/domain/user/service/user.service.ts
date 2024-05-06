@@ -66,7 +66,7 @@ export class UserService {
   async findById(id: number) {
     const user = await this.prisma.user.findUnique({
       where: { id },
-      select: this.USER_SELECT,
+      select: { ...this.USER_SELECT, firebaseToken: true },
     });
     if (!user) throw new NotFoundException(`user Not Found With id ${id}`);
     return user;
