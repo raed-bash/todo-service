@@ -29,9 +29,9 @@ import { AllowRoles } from 'src/common/guards/user-auth.guard';
 import { AllQueryTaskDto } from './dto/all-query-task.dto';
 import { AllCreateTaskDto } from './dto/all-create-task.dto';
 import { AllTaskService } from './service/all-task.service';
-import axios from 'axios';
 import { NotificationService } from '../notification/service/notification.service';
 import { AuthRequired } from 'src/common/guards/auth-required.decorator';
+import { EventEmitter2Types } from 'src/events/event-emitter-2';
 
 @Controller('task')
 @ApiTags('Task')
@@ -41,6 +41,7 @@ export class TaskController {
     private readonly taskService: TaskService,
     private readonly allTaskService: AllTaskService,
     private readonly notificationService: NotificationService,
+    private readonly eventEmitter: EventEmitter2Types,
   ) {}
 
   @Get()
@@ -206,7 +207,7 @@ export class TaskController {
     this.notificationService.storeNotification([body.userId], notification);
 
     if (firebaseToken) {
-      sendFCM({
+      this.eventEmitter.emit('fcm.send', {
         registration_ids: [firebaseToken],
         notification,
       });
@@ -244,30 +245,5 @@ export class TaskController {
     const task = await this.allTaskService.deleteToUser(id);
 
     return new TaskDto(task);
-  }
-}
-
-type FCMPayload = {
-  registration_ids: string[];
-  notification: {
-    title: string;
-    body: string;
-  };
-};
-async function sendFCM(payload: FCMPayload) {
-  try {
-    const res = await axios.post(
-      'https://fcm.googleapis.com/fcm/send',
-      payload,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.SERVER_FCM_KEY}`,
-          'Content-Type': 'application/json',
-        },
-      },
-    );
-    console.log(res.data);
-  } catch (err) {
-    console.error(err);
   }
 }

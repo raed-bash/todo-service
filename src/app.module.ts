@@ -11,6 +11,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { NotificationModule } from './domain/notification/notification.module';
 import { HealthcheckModule } from './healthcheck/healthcheck.module';
 import { ConfigModule } from '@nestjs/config';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { FCMModule } from './domain/fcm/fcm.module';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -18,13 +21,16 @@ import { ConfigModule } from '@nestjs/config';
       envFilePath: '.env',
       isGlobal: true,
     }),
+    EventEmitterModule.forRoot(),
+    HttpModule.register({ timeout: 5000, maxRedirects: 5 }),
+    JwtModule.register({ secret: process.env.SECRET_KEY_JWT }),
     PrismaModule,
     AuthModule,
     UserModule,
     TaskModule,
     NotificationModule,
-    JwtModule.register({ secret: process.env.SECRET_KEY_JWT }),
     HealthcheckModule,
+    FCMModule,
   ],
   providers: [
     ChatGateway,
