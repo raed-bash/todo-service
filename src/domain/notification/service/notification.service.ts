@@ -4,11 +4,12 @@ import { AddNotificationTokenDto } from '../dto/add-notification-token.dto';
 import { UserDto } from 'src/domain/user/dto/user.dto';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { NotificationDto } from '../dto/notification.dto';
-import { NotificationQueryDto } from '../dto/notification-query.dto';
+import { QueryNotificationDto } from '../dto/query-notification.dto';
 import { ReadNotificationDto } from '../dto/read-notification.dto';
 import { SendNotificationDto } from '../dto/send-notification.dto';
 import { QueryUserDto } from 'src/domain/user/dto/query-user.dto';
 import { EventDispatcherService } from 'src/events/event-dispatcher.service';
+import { Notification, UsersOnNotifications } from '@prisma/client';
 
 @Injectable()
 export class NotificationService {
@@ -18,6 +19,42 @@ export class NotificationService {
     private readonly emit: EventDispatcherService,
   ) {}
 
+  async findAllByQuery(query: QueryNotificationDto) {
+    const {
+      userId,
+      title,
+      body,
+      fromDate,
+      toDate,
+      orderBy,
+      orderDir,
+      page,
+      perPage,
+    } = query;
+
+    return await this.prisma.$transaction([
+      this.prisma.notification.count({
+        where: {
+          users: { every: { userId: userId } },
+          title: { contains: title },
+          body: { contains: body },
+          createdAt: { gte: fromDate, lte: toDate },
+        },
+      }),
+      this.prisma.notification.findMany({
+        where: {
+          users: { every: { userId: userId } },
+          title: { contains: title },
+          body: { contains: body },
+          createdAt: { gte: fromDate, lte: toDate },
+        },
+        skip: (page - 1) * perPage,
+        take: perPage,
+        orderBy: orderBy ? { [orderBy]: orderDir } : undefined,
+      }),
+    ]);
+  }
+
   async addNotificationToken(data: AddNotificationTokenDto, user: UserDto) {
     const notificationUser = await this.prisma.user.update({
       where: { id: user.id },
@@ -26,6 +63,18 @@ export class NotificationService {
     });
 
     return notificationUser;
+  }
+
+  async findById(id: number) {
+    const notification = await this.prisma.notification.findUnique({
+      where: { id },
+    });
+
+    if (!notification) {
+      throw new NotFoundException(`Notifiation Not Found With id: ${id}`);
+    }
+
+    return notification;
   }
 
   async storeNotification(
@@ -47,18 +96,13 @@ export class NotificationService {
     });
   }
 
-  async findByQuery(query: NotificationQueryDto & { userId: number }): Promise<
+  async findByQuery(query: QueryNotificationDto & { userId: number }): Promise<
     [
       number,
       number,
       {
-        seen: boolean;
-        notification: {
-          id: number;
-          title: string;
-          body: string;
-          createdAt: Date;
-        };
+        seen: UsersOnNotifications['seen'];
+        notification: Notification;
       }[],
     ]
   > {
@@ -116,7 +160,7 @@ export class NotificationService {
 
     if (data.userIds.length) {
       for (const id of data.userIds) {
-        const users = await this.userService.findById(id);
+        const users = await this.userService.findById(id, { role: data.role });
         if (users.firebaseToken) {
           firebaseTokens.push(users.firebaseToken);
         }
@@ -155,7 +199,7 @@ export class NotificationService {
 
     return await this.storeNotification(data.userIds, {
       body: data.body,
-      title: data.body,
+      title: data.title,
     });
   }
 

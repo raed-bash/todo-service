@@ -16,7 +16,16 @@ export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findByQuery(query: QueryUserDto) {
-    const { username, locked, role, perPage, page, orderBy, orderDir } = query;
+    const {
+      notificationId,
+      username,
+      locked,
+      role,
+      perPage,
+      page,
+      orderBy,
+      orderDir,
+    } = query;
 
     return this.prisma.$transaction([
       this.prisma.user.count({
@@ -24,6 +33,9 @@ export class UserService {
           username: { contains: username },
           locked: { equals: locked },
           role: { equals: role },
+          notifications: {
+            some: notificationId ? { notificationId } : undefined,
+          },
         },
       }),
       this.prisma.user.findMany({
@@ -31,6 +43,9 @@ export class UserService {
           username: { contains: username },
           locked: { equals: locked },
           role: { equals: role },
+          notifications: {
+            some: notificationId ? { notificationId } : undefined,
+          },
         },
         take: perPage,
         skip: (page - 1) * perPage,
@@ -50,7 +65,7 @@ export class UserService {
       if (existing) {
         throw new BadRequestException('is Already Exist');
       }
-      const randomSalt = Math.random() * 10;
+      const randomSalt = 15;
 
       const hashPassword = await bycrpt.hash(data.password, randomSalt);
 
@@ -63,9 +78,9 @@ export class UserService {
     });
   }
 
-  async findById(id: number) {
+  async findById(id: number, where?: Partial<Prisma.UserWhereUniqueInput>) {
     const user = await this.prisma.user.findUnique({
-      where: { id },
+      where: { id, ...where },
       select: { ...this.USER_SELECT, firebaseToken: true },
     });
     if (!user) throw new NotFoundException(`user Not Found With id ${id}`);
@@ -104,7 +119,7 @@ export class UserService {
   async changePassword(data: ChangePasswordUserDto) {
     await this.findById(data.id);
 
-    const randomSalt = Math.random() * 10;
+    const randomSalt = 15;
 
     const hashPassword = await bycrpt.hash(data.password, randomSalt);
 
